@@ -22,3 +22,7 @@ def test_model_prediction():
     prediction = model.predict(features)
 
     assert prediction[0] == 0
+
+#df
+
+
