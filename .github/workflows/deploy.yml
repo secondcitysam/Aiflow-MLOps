@@ -1,0 +1,43 @@
+name: Staging Deployment
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Preprocess data
+        run: python preprocess.py
+
+      - name: Train model
+        run: python train.py
+
+      - name: Evaluate model
+        run: python evaluate.py
+
+      - name: Prepare staging deployment
+        run: |
+          mkdir staging
+          cp models/model.pkl staging/model.pkl
+          cp metrics.json staging/metrics.json
+
+      - name: Upload staging deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-deployment
+          path: staging/
